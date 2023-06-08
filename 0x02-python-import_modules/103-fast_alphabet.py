@@ -1,2 +1,2 @@
-import string
-print(*string.ascii_uppercase, sep='\n')
+#!/usr/bin/python3
+import fast_alphabet_103
