@@ -11,3 +11,5 @@ ALX HIGHER LEVEL PROGRAMMING
 0x04. Python - More Data Structures: Set, Dictionary -- Working with Set And Dictionary.
 
 0x05. Python - Exceptions -- Working with Errors and Exceptions.
+
+0x06. Python - Classes and Objects -- Working with object oriented programming (OOP), classes, objects, instances, methods and attributes.
