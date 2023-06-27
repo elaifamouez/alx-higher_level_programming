@@ -1,128 +1,102 @@
 #!/usr/bin/python3
-"""Module containing the Square class"""
+"""Defines a class Square"""
 
 
 class Square:
-    """The Square class"""
+    """Represents a square
+    Attributes:
+        __size (int): size of a side of the square
+    """
     def __init__(self, size=0):
-        """Initializing an instance of Square
-
+        """initializes the square
         Args:
-            size (int): The size of the Square instance. Default value is 0.
+            size (int): size of a side of the square
+        Returns:
+            None
         """
         self.size = size
 
+    def area(self):
+        """calculates the square's area
+        Returns:
+            The area of the square
+        """
+        return (self.__size) ** 2
+
     @property
     def size(self):
-        """int: size of the Square instance"""
+        """getter of __size
+        Returns:
+            The size of the square
+        """
         return self.__size
 
     @size.setter
-    def size(self, size):
-        if not isinstance(size, int):
+    def size(self, value):
+        """setter of __size
+        Args:
+            value (int): the size of a size of the square
+        Returns:
+            None
+        """
+        if type(value) is not int:
             raise TypeError("size must be an integer")
-        if size < 0:
-            raise ValueError("size must be >= 0")
-
-        self.__size = size
-
-    def area(self):
-        """Returns the current square area of the instance
-
-        Returns:
-            int: The square of size
-        """
-        return self.__size ** 2
-
-    def __eq__(self, other):
-        """Check if the area of the instance is the same as the area of 'other'.
-
-        Returns:
-            bool: The return Value. True if self.area == other.area. False
-                otherwise, or 'other' is not of type Square.
-        """
-        if isinstance(other, Square):
-            if self.area() == other.area():
-                return True
-            else:
-                return False
         else:
-            return False
-
-    def __ne__(self, other):
-        """Check if the area of the instance is not the same as the area of
-            'other'.
-
-        Returns:
-            bool: The return Value. True if self.area != other.area. False
-                otherwise, or 'other' is not of type Square.
-        """
-        if isinstance(other, Square):
-            if self.area() != other.area():
-                return True
+            if value < 0:
+                raise ValueError("size must be >= 0")
             else:
-                return False
-        else:
-            return False
-
-    def __gt__(self, other):
-        """Check if the area of the instance is greater than the area of 'other'.
-
-        Returns:
-            bool: The return Value. True if self.area > other.area. False
-                otherwise, or 'other' is not of type Square.
-        """
-        if isinstance(other, Square):
-            if self.area() > other.area():
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def __ge__(self, other):
-        """Check if the area of the instance is greater than or equal to the
-            area of 'other'.
-
-        Returns:
-            bool: The return Value. True if self.area >= other.area. False
-                otherwise, or 'other' is not of type Square.
-        """
-        if isinstance(other, Square):
-            if self.area() >= other.area():
-                return True
-            else:
-                return False
-        else:
-            return False
+                self.__size = value
 
     def __lt__(self, other):
-        """Check if the area of the instance is less than the area of 'other'.
-
+        """Compare if square is less than another by area
+        Args:
+            other (Square): square to compare against
         Returns:
-            bool: The return Value. True if self.area < other.area. False
-                otherwise, or 'other' is not of type Square.
+            True or False
         """
-        if isinstance(other, Square):
-            if self.area() < other.area():
-                return True
-            else:
-                return False
-        else:
-            return False
+        return self.size < other.size
 
     def __le__(self, other):
-        """Check if the area of the instance is less than or equal to the area
-            of 'other'.
-
+        """Compare if square is less than or equal to another by area
+        Args:
+            other (Square): square to compare against
         Returns:
-            bool: The return Value. True if self.area <= other.area. False
-                otherwise, or 'other' is not of type Square.
+            True or False
         """
-        if isinstance(other, Square):
-            if self.area() <= other.area():
-                return True
-            else:
-                return False
-        else:
-            return False
+        return self.size <= other.size
+
+    def __eq__(self, other):
+        """Compare if square is equal to another by area
+        Args:
+            other (Square): square to compare against
+        Returns:
+            True or False
+        """
+        return self.size == other.size
+
+    def __ne__(self, other):
+        """Compare if square is not equal to another by area
+        Args:
+            other (Square): square to compare against
+        Returns:
+            True or False
+        """
+        return self.size != other.size
+
+    def __ge__(self, other):
+        """Compare if square is greater than or equal to another by area
+        Args:
+            other (Square): square to compare against
+        Returns:
+            True or False
+        """
+        return self.size >= other.size
+
+    def __gt__(self, other):
+        """Compare if square is greater than another by area
+        Args:
+            other (Square): square to compare against
+        Returns:
+            True or False
+        """
+        return self.size > other.size
