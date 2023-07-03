@@ -13,3 +13,5 @@ ALX HIGHER LEVEL PROGRAMMING
 0x05. Python - Exceptions -- Working with Errors and Exceptions.
 
 0x06. Python - Classes and Objects -- Working with object oriented programming (OOP), classes, objects, instances, methods and attributes.
+
+0x08. Python - More Classes and Objects -- Working with object oriented programming (OOP), Data Abstraction, Data Encapsulation, instances and classes attributes.
