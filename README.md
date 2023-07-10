@@ -19,3 +19,5 @@ ALX HIGHER LEVEL PROGRAMMING
 0x09. Python - Everything is object -- Working with  object oriented programming (OOP), mutability, identity and data types.
 
 0x07. Python - Test-driven development -- Working with docstrings to create and implement tests in Python.
+
+0x0A. Python - Inheritance -- Working with inheritance, superclass, baseclass and subclass in Python.
