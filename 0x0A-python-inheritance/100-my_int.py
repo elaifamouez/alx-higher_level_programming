@@ -1,13 +1,24 @@
 #!/usr/bin/python3
-""" New class """
+"""
+    Module containing the `MyInt` class
+"""
 
 
 class MyInt(int):
-    """ My int inherits from int """
-    def __eq__(self, num):
-        """ Function for equals """
-        return(int(self) != int(num))
+    """Inherits from the `int` class
+    """
+    def __eq__(self, other):
+        """Override equality operator to call inequality operator
 
-    def __ne__(self, num):
-        """ Function for not equals """
-        return (int(self) == int(num))
+        Args:
+            other (int): An int.
+        """
+        return super().__ne__(other)
+
+    def __ne__(self, other):
+        """Override inequality operaotr to call equality operator
+
+        Args:
+            other (int): An int.
+        """
+        return super().__eq__(other)
