@@ -1,39 +1,38 @@
 #!/usr/bin/python3
-"""reads stdin line by line and computes metrics"""
+'''
+Script for log parsing
+'''
 import sys
 
-file_size = 0
-status_tally = {"200": 0, "301": 0, "400": 0, "401": 0,
-                "403": 0, "404": 0, "405": 0, "500": 0}
-i = 0
-try:
-    for line in sys.stdin:
-        tokens = line.split()
-        if len(tokens) >= 2:
-            a = i
-            if tokens[-2] in status_tally:
-                status_tally[tokens[-2]] += 1
+
+if __name__ == "__main__":
+    a = []
+    codes = ["200", "301", "400", "401", "403", "404", "405", "500"]
+    dictio = {"200": 0, "301": 0, "400": 0, "401": 0, "403": 0, "404": 0,
+              "405": 0, "500": 0}
+    i = 0
+    file_size = 0
+    try:
+        for lines in sys.stdin:
+            a = lines.split(" ")
+            if "\n" in a[-1]:
+                value = a[-1][:-1]
+            else:
+                value = a[-1]
+            if len(a) > 2 and a[-2] in codes and value.isnumeric() is True:
+                dictio[a[-2]] += 1
+                file_size += int(value)
                 i += 1
-            try:
-                file_size += int(tokens[-1])
-                if a == i:
-                    i += 1
-            except:
-                if a == i:
-                    continue
-
-        if i % 10 == 0:
-            print("File size: {:d}".format(file_size))
-            for key, value in sorted(status_tally.items()):
-                if value:
-                    print("{:s}: {:d}".format(key, value))
-    print("File size: {:d}".format(file_size))
-    for key, value in sorted(status_tally.items()):
-        if value:
-            print("{:s}: {:d}".format(key, value))
-
-except KeyboardInterrupt:
-    print("File size: {:d}".format(file_size))
-    for key, value in sorted(status_tally.items()):
-        if value:
-            print("{:s}: {:d}".format(key, value))
+            if i % 10 == 0:
+                print("File size: {}".format(file_size))
+                for code in codes:
+                    if dictio[code] > 0:
+                        print("{}: {}".format(code, dictio[code]))
+        exit()
+    except Exception:
+        pass
+    finally:
+        print("File size: {}".format(file_size))
+        for code in codes:
+            if dictio[code] > 0:
+                print("{}: {}".format(code, dictio[code]))
