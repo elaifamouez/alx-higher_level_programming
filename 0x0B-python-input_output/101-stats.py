@@ -1,33 +1,45 @@
 #!/usr/bin/python3
-"""Web Request Stats module"""
+"""script that reads stdin line by line and computes metrics"""
 
 
-iteration = 1
-while True:
-    status_codes = {200: 0, 301: 0, 400: 0, 401: 0,
-                    403: 0, 404: 0, 405: 0, 500: 0}
-    total_size = 0
-    line_count = 0
-    try:
-        line = input()
-        while line:
-            file_size = int(line[line.rfind(" ") + 1:])
-            status_code = int(line[line.rfind(" ", 0,
-                                              line.rfind(" ") - 1) +
-                                   1:line.rfind(" ")])
-            total_size += file_size
-            status_codes[status_code] += 1
-            line_count += 1
-            if line_count == 10 * iteration:
-                print("File size:", total_size)
-                for key, value in status_codes.items():
-                    if value:
-                        print("{}:".format(key), value)
-                break
-            new_line = input()
-        iteration += 1
-    except KeyboardInterrupt:
-        print("File size:", total_size)
-        for key, value in status_codes.items():
-            if value:
-                print("{}:".format(key), value)
+import sys
+
+
+def print_stats(total_size, status_counts):
+    """prints the stats"""
+    print("File size: {:d}".format(total_size))
+    for key, value in sorted(status_counts.items()):
+        print("{}: {:d}".format(key, value))
+    sys.stdout.flush()
+
+
+total_size = 0
+valid_status = ['200', '301', '400', '401', '403', '404', '405', '500']
+status_counts = {}
+count = 0
+try:  # read lines from stdin
+    for line in sys.stdin:
+        # Process the line here
+        if count == 10:
+            print_stats(total_size, status_counts)
+            count = 1
+        else:
+            count += 1
+        items = line.rstrip().split()  # remove newline character and split
+        try:
+            total_size += int(items[-1])
+        except (ValueError, IndexError):
+            pass
+        try:
+            status = items[-2]
+            if status in valid_status:
+                if status in status_counts:
+                    status_counts[status] += 1
+                else:
+                    status_counts[status] = 1
+        except IndexError:
+            pass
+    print_stats(total_size, status_counts)
+except KeyboardInterrupt:
+    print_stats(total_size, status_counts)
+    raise
