@@ -1,42 +1,40 @@
+#!/usr/bin/python3
+"""
+reads stdin line by line and computes metrics
+"""
 import sys
 
-def print_stats(file_size, status_codes):
-    """
-    Prints the current statistics for file size and status codes.
+file_size = 0
+status_tally = {"200": 0, "301": 0, "400": 0, "401": 0,
+                "403": 0, "404": 0, "405": 0, "500": 0}
+i = 0
+try:
+    for line in sys.stdin:
+        tokens = line.split()
+        if len(tokens) >= 2:
+            a = i
+            if tokens[-2] in status_tally:
+                status_tally[tokens[-2]] += 1
+                i += 1
+            try:
+                file_size += int(tokens[-1])
+                if a == i:
+                    i += 1
+            except FileNotFoundError:
+                if a == i:
+                    continue
+        if i % 10 == 0:
+            print("File size: {:d}".format(file_size))
+            for key, value in sorted(status_tally.items()):
+                if value:
+                    print("{:s}: {:d}".format(key, value))
+    print("File size: {:d}".format(file_size))
+    for key, value in sorted(status_tally.items()):
+        if value:
+            print("{:s}: {:d}".format(key, value))
 
-    :param file_size: The total file size.
-    :type file_size: int
-    :param status_codes: A dictionary containing the number of lines for each status code.
-    :type status_codes: dict
-    """
-    print("File size: {}".format(file_size))
-    for code in sorted(status_codes.keys()):
-        print("{}: {}".format(code, status_codes[code]))
-
-def process_log():
-    """
-    Processes the log data from standard input.
-    """
-    file_size = 0
-    status_codes = {}
-    line_count = 0
-
-    try:
-        for line in sys.stdin:
-            line_count += 1
-            parts = line.split()
-            file_size += int(parts[-1])
-            code = parts[-2]
-            if code not in status_codes:
-                status_codes[code] = 0
-            status_codes[code] += 1
-            if line_count % 10 == 0:
-                print_stats(file_size, status_codes)
-    except KeyboardInterrupt:
-        print_stats(file_size, status_codes)
-        raise
-
-    print_stats(file_size, status_codes)
-
-if __name__ == '__main__':
-    process_log()
+except KeyboardInterrupt:
+    print("File size: {:d}".format(file_size))
+    for key, value in sorted(status_tally.items()):
+        if value:
+            print("{:s}: {:d}".format(key, value))
