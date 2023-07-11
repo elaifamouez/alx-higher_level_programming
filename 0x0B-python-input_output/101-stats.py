@@ -1,52 +1,48 @@
 #!/usr/bin/python3
-"""14. Log parsing"""
+"""
+Reads lines from stdin and prints status codes
+and number of times status code occured after every 10 lines
+"""
 
-import sys
+if __name__ == '__main__':
+    import fileinput
+    import sys
 
-
-if __name__ == "__main__":
-
-    def status_codes(size, status_codes):
-        """A function that prints status codes till CTRL + C"""
-
+    def print_dict(status, size):
+        """Prints a dictionary in sorted order"""
         print("File size: {}".format(size))
-        for key in sorted(status_codes):
-            print("{}: {}".format(key, status_codes[key]))
-
-    size = 0
-    possible_codes = {}
-    valid_codes = ['200', '301', '400', '401', '403', '404', '405', '500']
-    i = 0
+        status = dict(sorted(status.items()))
+        for elem in status:
+            print("{}: {}".format(elem, status[elem]))
 
     try:
-        for line in sys.stdin:
-            if i == 10:
-                status_codes(size, possible_codes)
-                i = 1
-
-            else:
-                i += 1
-
+        i = 0
+        file_size = 0
+        status_code = {}
+        new_list = [200, 301, 400, 401, 403, 404, 405, 500]
+        for line in fileinput.input():
+            if i % 10 == 0 and i != 0:
+                print_dict(status_code, file_size)
             line = line.split()
-            try:
-                size += int(line[-1])
-
-            except (IndexError, ValueError):
-                pass
-
-            try:
-                if line[-2] in valid_codes:
-                    if possible_codes.get(line[-2], -1) == -1:
-                        possible_codes[line[-2]] = 1
-
-                    else:
-                        possible_codes[line[-2]] += 1
-
-            except IndexError:
-                pass
-
-        status_codes(size, possible_codes)
-
-    except KeyboardInterrupt:
-        status_codes(size, possible_codes)
-        raise
+            if len(line) < 2:
+                continue
+            tmp = line[-2]
+            if ord(tmp[0]) not in list(range(48, 57)):
+                raise
+                continue
+            code = line[-2]
+            size = line[-1]
+            if not code:
+                continue
+            if int(code) not in new_list:
+                continue
+            if code not in status_code:
+                status_code[code] = 1
+            else:
+                status_code[code] += 1
+            file_size += int(size)
+            i += 1
+        print_dict(status_code, file_size)
+    except (IndexError, KeyboardInterrupt):
+        print_dict(status_code, file_size)
+        sys.exit(1)
