@@ -1,30 +1,40 @@
 #!/usr/bin/python3
+"""
+reads stdin line by line and computes metrics
+"""
 import sys
-import io
-"""
-input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
-with open(input, "r", encoding="utf-8") as file:
-    for line in file:
-        print(line)
 
-input = io.TextIOWrapper(sys.stdin , encoding='utf-8')
-"""
-dictstatus = {}
-totalsize = 0
-totalcount = 0
-for line in sys.stdin:
-    split = line.split()
-    status = split[-2]
-    totalsize += int(split[-1])
-    if status in dictstatus.keys():
-        dictstatus[status] += 1
-    else:
-        dictstatus[status] = 1
-    totalcount += 1
-    if totalcount == 10:
-        sortme = sorted(dictstatus.keys())
-        print("File size:", totalsize)
-        for keys in sortme:
-            print("{}: {}".format(keys, dictstatus[keys]))
-        totalcount = 0
-        continue
+file_size = 0
+status_tally = {"200": 0, "301": 0, "400": 0, "401": 0,
+                "403": 0, "404": 0, "405": 0, "500": 0}
+i = 0
+try:
+    for line in sys.stdin:
+        tokens = line.split()
+        if len(tokens) >= 2:
+            a = i
+            if tokens[-2] in status_tally:
+                status_tally[tokens[-2]] += 1
+                i += 1
+            try:
+                file_size += int(tokens[-1])
+                if a == i:
+                    i += 1
+            except FileNotFoundError:
+                if a == i:
+                    continue
+        if i % 10 == 0:
+            print("File size: {:d}".format(file_size))
+            for key, value in sorted(status_tally.items()):
+                if value:
+                    print("{:s}: {:d}".format(key, value))
+    print("File size: {:d}".format(file_size))
+    for key, value in sorted(status_tally.items()):
+        if value:
+            print("{:s}: {:d}".format(key, value))
+
+except KeyboardInterrupt:
+    print("File size: {:d}".format(file_size))
+    for key, value in sorted(status_tally.items()):
+        if value:
+            print("{:s}: {:d}".format(key, value))
