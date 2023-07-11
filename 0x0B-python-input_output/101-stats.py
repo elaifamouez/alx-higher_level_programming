@@ -1,58 +1,51 @@
-import os
-import signal
+#!/usr/bin/python3
+"""
+Reads from standard input and computes metrics
+"""
 
 
-def compute_metrics():
-    # Dictionary to store total file size and count of lines by status code
-    metrics = {'total_size': 0, 'status_codes': {}}
+if __name__ == "__main__":
+    import sys
+
+    stdin = sys.stdin
+
+    c = 0
+    size = 0
+    vd = ['200', '301', '400', '401', '403', '404', '405', '500']
+    st = {}
 
     try:
-        line_count = 0
-        for line in iter(input, ''):
-            line_count += 1
-            ip, date, request, status_code, file_size = parse_line(line)
-            
-            # Update total file size
-            metrics['total_size'] += file_size
+        for line in stdin:
+            if c == 10:
+                print("File size: {}".format(size))
+                for i in sorted(st):
+                    print("{}: {}".format(i, st[i]))
+                c = 1
+            else:
+                c = c + 1
 
-            # Update count of lines by status code
-            if status_code not in metrics['status_codes']:
-                metrics['status_codes'][status_code] = 0
-            metrics['status_codes'][status_code] += 1
+            line = line.split()
 
-            # Print statistics every 10 lines
-            if line_count % 10 == 0:
-                print_statistics(metrics)
+            try:
+                size = size + int(line[-1])
+            except (IndexError, ValueError):
+                pass
 
-    except (KeyboardInterrupt, EOFError):
-        print_statistics(metrics)
+            try:
+                if line[-2] in vd:
+                    if st.get(line[-2], -1) == -1:
+                        st[line[-2]] = 1
+                    else:
+                        st[line[-2]] = st[line[-2]] + 1
+            except IndexError:
+                pass
 
+        print("File size: {}".format(size))
+        for i in sorted(st):
+            print("{}: {}".format(i, st[i]))
 
-def parse_line(line):
-    parts = line.strip().split()
-    ip = parts[0]
-    date = parts[2].strip('[]')
-    request = parts[4][1:]
-    status_code = parts[5]
-    file_size = int(parts[6])
-    return ip, date, request, status_code, file_size
-
-
-def print_statistics(metrics):
-    print("Total file size: File size:", metrics['total_size'])
-
-    # Sort and print count of lines by status code in ascending order
-    sorted_status_codes = sorted(metrics['status_codes'].items(), key=lambda x: x[0])
-    for code, count in sorted_status_codes:
-        print(f"{code}: {count}")
-
-
-def signal_handler(signum, frame):
-    # Handle the keyboard interruption (Ctrl + C)
-    print()
-    os._exit(0)
-
-
-if __name__ == '__main__':
-    signal.signal(signal.SIGINT, signal_handler)
-    compute_metrics()
+    except KeyboardInterrupt:
+        print("File size: {}".format(size))
+        for i in sorted(st):
+            print("{}: {}".format(i, st[i]))
+        raise
