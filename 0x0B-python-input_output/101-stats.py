@@ -1,54 +1,57 @@
 #!/usr/bin/python3
-"""
-Module fot the function print_all
-"""
-from sys import stdin
+""" Module to print status code """
+import sys
 
 
-def print_all(size, codes):
-    """
-    Function that prints all, duh!
+class StatusCodeAnalyzer:
+    """ Class to generate instances with dictionary and size"""
+    def __init__(self):
+        """ Init method """
+        self.status_dict = {}
+        self.size = 0
 
-    Args:
-        size (int): size of file
-        codes (dict): codes dictionnary
-    """
+    def init_status_dict(self):
+        """ Initialize dictionary """
+        self.status_dict['200'] = 0
+        self.status_dict['301'] = 0
+        self.status_dict['400'] = 0
+        self.status_dict['401'] = 0
+        self.status_dict['403'] = 0
+        self.status_dict['404'] = 0
+        self.status_dict['405'] = 0
+        self.status_dict['500'] = 0
 
-size = 0
-count = 0
-codes = {
-    "200": 0,
-    "301": 0,
-    "400": 0,
-    "401": 0,
-    "403": 0,
-    "404": 0,
-    "405": 0,
-    "500": 0,
-}
-try:
-    for line in stdin:
-        lines = line.split()
-        try:
-            size += int(lines[-1])
-        except (IndexError, ValueError):
-            pass
-        try:
-            for key in codes:
-                if key == lines[-2]:
-                    codes[key] += 1
-        except IndexError:
-            pass
-        count += 1
-        if count == 10:
-            print("File size: {}".format(size))
-            for key in codes:
-                if codes[key] != 0:
-                    print("{}: {}".format(key, codes[key]))
-            count = 0
-except KeyboardInterrupt:
-    print("File size: {}".format(size))
-    for key in codes:
-        if codes[key] != 0:
-            print("{}: {}".format(key, codes[key]))
-    raise
+    def add_status_code(self, status):
+        """ Add repeated number to the status code """
+        if status in self.status_dict:
+            self.status_dict[status] += 1
+
+    def print_info(self, sig=0, frame=0):
+        """ Print status code """
+        print("File size: {:d}".format(self.size))
+        for key in sorted(self.status_dict.keys()):
+            if self.status_dict[key] != 0:
+                print("{}: {:d}".format(key, self.status_dict[key]))
+
+
+if __name__ == "__main__":
+    analyzer = StatusCodeAnalyzer()
+    analyzer.init_status_dict()
+    nlines = 0
+
+    try:
+        for line in sys.stdin:
+            if nlines % 10 == 0 and nlines != 0:
+                analyzer.print_info()
+
+            try:
+                list_line = [x for x in line.split(" ") if x.strip()]
+                analyzer.add_status_code(list_line[-2])
+                analyzer.size += int(list_line[-1].strip("\n"))
+            except:
+                pass
+            nlines += 1
+    except KeyboardInterrupt:
+        analyzer.print_info()
+        raise
+    analyzer.print_info()
