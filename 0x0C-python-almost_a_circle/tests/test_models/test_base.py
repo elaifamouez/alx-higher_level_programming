@@ -1,256 +1,231 @@
 #!/usr/bin/python3
+"""module for use in testing
+    base class
 """
-Module for the uniitest of the class Base
-"""
-import models.base as b
-import models.rectangle as r
-import models.square as s
-import unittest
+
+
 import os
+import unittest
+from models.base import Base
+from models.rectangle import Rectangle
+from models.square import Square
 
 
 class TestBase(unittest.TestCase):
+    """class for test case for base class
     """
-    class TestBase
-    """
 
-    def test_module_doc(self):
+    def test_basic(self):
+        """tests basic functionality
         """
-        Tests for the module doc
-        """
-        self.assertIsNotNone(b.__doc__)
-        self.assertGreater(len(b.__doc__), 0)
+        b = Base()
+        b2 = Base()
+        b3 = Base()
+        self.assertEqual(b2.id + 1, b3.id)
 
-    def test_class_doc(self):
+    def test_given_id(self):
+        """tests id being set when given and not upticking default
         """
-        Tests for the class doc
-        """
-        self.assertIsNotNone(b.Base.__doc__)
-        self.assertGreater(len(b.Base.__doc__), 0)
+        b = Base()
+        b2 = Base(24)
+        b3 = Base(45)
+        b4 = Base()
+        self.assertEqual(45, b3.id)
+        self.assertEqual(b.id + 1, b4.id)
 
-    def test_method_doc(self):
+    def test_json_method(self):
+        """tests Base's to_json_string method
         """
-        Tests for the __init__ doc
-        """
-        self.assertIsNotNone(b.Base.__init__.__doc__)
-        self.assertGreater(len(b.Base.__init__.__doc__), 0)
+        r1 = Rectangle(4, 5, 6, 7, 8)
+        r2 = Rectangle(10, 11, 12, 13, 14)
+        dictionary = r1.to_dictionary()
+        d2 = r2.to_dictionary()
+        json_dict = Base.to_json_string([dictionary, d2])
+        j_d = eval(json_dict)
+        self.assertEqual(j_d[0]['id'], 8)
+        self.assertEqual(j_d[1]['x'], 12)
 
-    def test_to_json_string_doc(self):
+    def test_write_file_basic(self):
+        """tests write to file basic capabilities, given 1 type of class
         """
-        Tests for the to json string doc
-        """
-        self.assertIsNotNone(b.Base.to_json_string.__doc__)
-        self.assertGreater(len(b.Base.to_json_string.__doc__), 0)
+        s = Square(3, 1, 1, 10)
+        s2 = Square(4, 2, 2, 20)
+        r1 = Rectangle(5, 6, 3, 3, 30)
+        r2 = Rectangle(7, 8, 4, 4, 40)
+        Base.save_to_file([s, s2])
+        with open('Square.json', 'r', encoding='utf-8') as myFile:
+            text = myFile.read()
+        list_of_dicts = eval(text)
+        self.assertEqual(list_of_dicts[0]['id'], 10)
+        self.assertEqual(list_of_dicts[1]['x'], 2)
 
-    def setUp(self):
-        """
-        Resets counter and create a temporary directory for test files
-        """
-        b.Base._Base__nb_objects = 0
+        Base.save_to_file([r1, r2])
+        with open('Rectangle.json', 'r', encoding='utf-8') as myFile:
+            text = myFile.read()
+        list_of_dicts = eval(text)
+        self.assertEqual(list_of_dicts[0]['id'], 30)
+        self.assertEqual(list_of_dicts[1]['x'], 4)
 
-    def test_base_id_incr(self):
+    def test_write_file_complex(self):
+        """tests writing a file with harder inputs
         """
-        Tests for for base id inctrementation
-        """
-        b1 = b.Base()
-        b2 = b.Base()
-        self.assertEqual(b1.id, b2.id - 1)
+        s = Square(3, 1, 1, 10)
+        s2 = Square(4, 2, 2, 20)
+        r1 = Rectangle(5, 6, 3, 3, 30)
+        r2 = Rectangle(7, 8, 4, 4, 40)
+        Base.save_to_file(["hello", 42, "more garb", True, s, s2])
+        with open('Square.json', 'r', encoding='utf-8') as myFile:
+            text = myFile.read()
+        list_of_dicts = eval(text)
+        self.assertEqual(list_of_dicts[0]['id'], 10)
+        self.assertEqual(list_of_dicts[1]['x'], 2)
 
-    def test_id_None(self):
-        """
-        Tests for None id
-        """
-        b1 = b.Base(None)
-        b2 = b.Base()
-        self.assertEqual(b1.id, b2.id - 1)
+        Base.save_to_file([s, 89, r1, "garb", 42, s2, r2])
+        with open('Rectangle.json', 'r', encoding='utf-8') as myFile:
+            text = myFile.read()
+        list_of_dicts = eval(text)
+        self.assertEqual(list_of_dicts[1]['id'], 30)
+        self.assertEqual(list_of_dicts[3]['x'], 4)
 
-    def test_private_attribute(self):
+    def test_write_file_empty(self):
+        """tests empty list is written to correct default file
         """
-        Tests for private attributes
-        """
-        with self.assertRaises(AttributeError):
-            b.Base(5).__nb_objects
+        Base.save_to_file([])
+        with open('Rectangle.json', 'r', encoding='utf-8') as myFile:
+            text = myFile.read()
+        self.assertEqual(text, "[]")
 
-    def test_id_True(self):
+    def test_from_json(self):
+        """tests bases from_json_string method to convert string to
+                -> list of dictionaries
         """
-        Tests id boolean
-        """
-        self.assertEqual(b.Base(True).id, True)
+        s = Square(4, 8, 9, 2)
+        r = Rectangle(9, 2, 3, 4)
+        r_d = r.to_dictionary()
+        s_d = s.to_dictionary()
+        json_d = Base.to_json_string([s_d, r_d])
+        d_list = Base.from_json_string(json_d)
+        self.assertEqual(d_list[0]['id'], 2)
+        self.assertEqual(d_list[1]['width'], 9)
+        self.assertEqual(len(d_list), 2)
 
-    def test_base_id_input(self):
+    def test_from_json_empty(self):
+        """tests base's from_json_string method with empty inputs
         """
-        Tests for id input
-        """
-        self.assertEqual(b.Base(89).id, 89)
-        self.assertEqual(b.Base(-89).id, -89)
-        self.assertEqual(b.Base(0).id, 0)
+        d_list = Base.from_json_string("")
+        self.assertEqual(len(d_list), 0)
+        d_list = Base.from_json_string(None)
+        self.assertEqual(len(d_list), 0)
 
-    def test_id_str(self):
-        """
-        Tests with str id
-        """
-        self.assertEqual(b.Base('Hola!').id, 'Hola!')
+    def test_create_inst(self):
+        r = Rectangle(9, 2, 3, 4, 45)
+        s = Square(4, 8, 9, 2)
+        r_d = r.to_dictionary()
+        s_d = s.to_dictionary()
+        r2 = Rectangle.create(**r_d)
+        s2 = Square.create(**s_d)
+        self.assertEqual(s.id, s2.id)
+        self.assertEqual(r.id, r2.id)
+        self.assertEqual(s.y, s2.y)
+        self.assertEqual(s.x, s2.x)
+        self.assertEqual(r.width, r2.width)
+        self.assertEqual(s.size, s2.size)
 
-    def test_more_args(self):
+    def test_read_from_file(self):
+        """tests the base class method read from file, for use in
+            -> Rectangle and Square
         """
-        Tests for too many args
-        """
-        with self.assertRaises(TypeError):
-            b.Base(5, 10)
+        r1 = Rectangle(10, 7, 2, 8)
+        r2 = Rectangle(2, 4)
+        list_rectangles_input = [r1, r2]
+        Rectangle.save_to_file(list_rectangles_input)
+        list_rectangles_output = Rectangle.load_from_file()
+        self.assertEqual(list_rectangles_output[0].y, 8)
+        self.assertEqual(list_rectangles_output[1].height, 4)
 
-    def test_base_id_mix(self):
+    def test_read_from_file_basic(self):
+        """tests the base class method to read from json files when
+            -> input is basic
         """
-        Tests for both
-        """
-        self.assertEqual(b.Base(89).id, 89)
-        self.assertEqual(b.Base().id, 1)
-        self.assertEqual(b.Base(0).id, 0)
-        self.assertEqual(b.Base().id, 2)
-        self.assertEqual(b.Base().id, 3)
-        self.assertEqual(b.Base(-1).id, -1)
-        self.assertEqual(b.Base(4).id, 4)
+        r1 = Rectangle(10, 7, 8, 3, 44)
+        r2 = Rectangle(24, 23, 5, 1, 99)
+        Rectangle.save_to_file([r1, r2])
+        with open('Rectangle.json', 'r', encoding='utf-8') as myFile:
+            text = myFile.read()
+        rects = Rectangle.load_from_file()
+        self.assertEqual(rects[0].width, 10)
+        self.assertEqual(rects[1].id, 99)
+        self.assertEqual(rects[1].x, 5)
 
-    def test_to_json_string_empty(self):
+    def test_read_from_file_empty(self):
+        """tests the base class method to read from json files when
+            -> empty
         """
-        Tests for empty input
-        """
-        result = b.Base.to_json_string([])
-        self.assertIsInstance(result, str)
-        self.assertEqual(result, "[]")
+        try:
+            os.remove('Square.json')
+        except:
+            pass
+        list_output = Square.load_from_file()
+        self.assertEqual(len(list_output), 0)
+        self.assertEqual(list, type(list_output))
 
-    def test_to_json_string_none(self):
+    def test_write_csv_basic(self):
+        """tests the base class method to write instances as csv
         """
-        Tests with none input
-        """
-        result = b.Base.to_json_string(None)
-        self.assertIsInstance(result, str)
-        self.assertEqual(result, "[]")
+        r1 = Rectangle(10, 7, 2, 8, 33)
+        r2 = Rectangle(10, 8, 4, 9, 44)
+        Rectangle.save_to_file_csv([r1, r2])
+        with open('Rectangle.csv', 'r', encoding='utf-8') as myFile:
+            text = myFile.readlines()
+        self.assertEqual(text[0][0] + text[0][1], "33")
+        self.assertEqual(text[1][0] + text[1][1], "44")
 
-    def test_to_json_string(self):
+    def test_write_csv_complex(self):
+        """tests the base class method to write instances as csv
+            -> with bad input etc
         """
-        Test with 1 dictionary
-        """
-        dictionaries = r.Rectangle(10, 7, 2, 8).to_dictionary()
-        expected = str(dictionaries)
-        result = b.Base.to_json_string(dictionaries)
-        self.assertIsInstance(result, str)
-        self.assertEqual(eval(result), eval(expected))
+        r1 = Rectangle(10, 7, 2, 4, 33)
+        r2 = Rectangle(10, 8, 4, 9, 44)
+        s1 = Square(10, 8, 4, 109)
+        s2 = Square(11, 4, 3, 120)
+        bs = ["bs", 42, True]
+        more_bs = 45.34
+        Rectangle.save_to_file_csv([bs, s1, s2, more_bs, r2, r1])
+        with open('Rectangle.csv', 'r', encoding='utf-8') as myFile:
+            text = myFile.readlines()
+        self.assertEqual(text[0][0] + text[0][1] + text[0][2], "109")
+        self.assertEqual(text[3][0] + text[3][1], "33")
 
-    def test_to_json_strings(self):
+    def test_read_csv_basic(self):
+        """tests the base class method to read from csv
+            -> basic input
         """
-        Test with multiple dictionaries
-        """
-        d_list = []
-        d_list.append(r.Rectangle(10, 7, 2, 8).to_dictionary())
-        d_list.append(r.Rectangle(8, 4).to_dictionary())
-        d_list.append(r.Rectangle(8, 4).to_dictionary())
-        expected = str(d_list)
-        result = b.Base.to_json_string(d_list)
-        self.assertIsInstance(result, str)
-        self.assertEqual(eval(result), eval(expected))
+        r1 = Rectangle(10, 7, 2, 8)
+        r2 = Rectangle(2, 4)
+        list_rectangles_input = [r1, r2]
+        Rectangle.save_to_file_csv(list_rectangles_input)
+        list_output = Rectangle.load_from_file_csv()
+        self.assertEqual(8, list_output[0].y)
+        self.assertEqual(4, list_output[1].height)
 
-    def test_save_to_file_none(self):
+    def test_read_csv_complex(self):
+        """tests the base class method to read from csv
+            -> complex input, can contain squares in rectangle file
+            -> squares should be returned as rectangles
         """
-        Tests save to file with none with rectangle
-        """
-        r.Rectangle.save_to_file(None)
-        self.assertTrue(os.path.exists(os.path.join(".", "Rectangle.json")))
-        with open("Rectangle.json", "r") as f:
-            file_contents = f.read()
-        self.assertEqual(file_contents, "[]")
+        r1 = Rectangle(10, 7, 2, 8)
+        s1 = Square(2, 4)
+        list_rectangles_input = [r1, s1]
+        Rectangle.save_to_file_csv(list_rectangles_input)
+        list_output = Rectangle.load_from_file_csv()
+        self.assertEqual(8, list_output[0].y)
+        self.assertEqual(4, list_output[1].height)
 
-    def test_save_to_file_none_2(self):
-        """
-        Tests save to file with none with sqaure
-        """
-        s.Square.save_to_file(None)
-        self.assertTrue(os.path.exists(os.path.join(".", "Square.json")))
-        with open("Square.json", "r") as f:
-            file_contents = f.read()
-        self.assertEqual(file_contents, "[]")
-
-    def test_save_to_file_empty_list(self):
-        """
-        Tests save to file with empty list with rectangle
-        """
-        r.Rectangle.save_to_file([])
-        self.assertTrue(os.path.exists(os.path.join(".", "Rectangle.json")))
-        with open("Rectangle.json", "r") as f:
-            file_contents = f.read()
-        self.assertEqual(file_contents, "[]")
-
-    def test_save_to_file_empty_list_2(self):
-        """
-        Tests save to file with none with sqaure
-        """
-        s.Square.save_to_file([])
-        self.assertTrue(os.path.exists(os.path.join(".", "Square.json")))
-        with open("Square.json", "r") as f:
-            file_contents = f.read()
-        self.assertEqual(file_contents, "[]")
-
-    def test_save_to_file_1_inst_rec(self):
-        """
-        Tests save to file with 1 intsance of rectangle
-        """
-        obj = r.Rectangle(5, 3, 1, 6, 9)
-        r.Rectangle.save_to_file([obj])
-        self.assertTrue(os.path.exists(os.path.join(".", "Rectangle.json")))
-        with open("Rectangle.json", "r") as f:
-            file_contents = f.read()
-        dictionary = obj.to_dictionary()
-        self.assertEqual(file_contents, b.Base.to_json_string([dictionary]))
-
-    def test_save_to_file_1_inst_squ(self):
-        """
-        Tests save to file with 1 intsance of square
-        """
-        obj = s.Square(3, 1, 6, 9)
-        s.Square.save_to_file([obj])
-        self.assertTrue(os.path.exists(os.path.join(".", "Square.json")))
-        with open("Square.json", "r") as f:
-            file_contents = f.read()
-        dictionary = obj.to_dictionary()
-        self.assertEqual(file_contents, b.Base.to_json_string([dictionary]))
-
-    def test_save_to_file_multiple_rec(self):
-        """
-        Tests save to file with multiple instances of rectangle
-        """
-        d_list = []
-        d_list.append(r.Rectangle(2, 1))
-        d_list.append(r.Rectangle(55, 1, 0, 12, 98))
-        d_list.append(r.Rectangle(2, 5, 13, 4))
-        r.Rectangle.save_to_file(d_list)
-        self.assertTrue(os.path.exists(os.path.join(".", "Rectangle.json")))
-        with open("Rectangle.json", "r") as f:
-            file_contents = f.read()
-        self.setUp()
-        r_list = []
-        r_list.append(r.Rectangle(2, 1).to_dictionary())
-        r_list.append(r.Rectangle(55, 1, 0, 12, 98).to_dictionary())
-        r_list.append(r.Rectangle(2, 5, 13, 4).to_dictionary())
-        self.assertEqual(file_contents, b.Base.to_json_string(r_list))
-
-    def test_save_to_file_multiple_squ(self):
-        """
-        Tests save to file with multiple instances of square
-        """
-        d_list = []
-        d_list.append(s.Square(2, 1))
-        d_list.append(s.Square(1, 0, 12, 98))
-        d_list.append(s.Square(2, 5, 13, 4))
-        s.Square.save_to_file(d_list)
-        self.assertTrue(os.path.exists(os.path.join(".", "Square.json")))
-        with open("Square.json", "r") as f:
-            file_contents = f.read()
-        self.setUp()
-        r_list = []
-        r_list.append(s.Square(2, 1).to_dictionary())
-        r_list.append(s.Square(1, 0, 12, 98).to_dictionary())
-        r_list.append(s.Square(2, 5, 13, 4).to_dictionary())
-        self.assertEqual(file_contents, b.Base.to_json_string(r_list))
-
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_read_csv_empty(self):
+        try:
+            os.remove('Square.csv')
+        except:
+            pass
+        list_output = Square.load_from_file_csv()
+        self.assertEqual(0, len(list_output))
+        self.assertEqual(list, type(list_output))
