@@ -23,3 +23,5 @@ ALX HIGHER LEVEL PROGRAMMING
 0x0A. Python - Inheritance -- Working with inheritance, superclass, baseclass and subclass in Python.
 
 0x0B. Python - Input/Output -- Working with Files and how to open, read, write and append files from a script in Python.
+
+0x0C. Python - Almost a circle -- preparation for the AirBnB project.
