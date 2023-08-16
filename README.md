@@ -27,3 +27,5 @@ ALX HIGHER LEVEL PROGRAMMING
 0x0C. Python - Almost a circle -- preparation for the AirBnB project.
 
 0x0D. SQL - Introduction -- Working with Mysql Database and Sql Query.
+
+0x0E. SQL - More queries -- Working with SqlQuery and Permissions ,constraints. 
