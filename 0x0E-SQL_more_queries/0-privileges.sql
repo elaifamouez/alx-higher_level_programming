@@ -11,3 +11,7 @@ CREATE USER IF NOT EXISTS 'user_0d_2'@'localhost';
 SET PASSWORD FOR 'user_0d_2'@'localhost' = 'user_0d_2_pwd';
 GRANT ALL PRIVILEGES ON *.* TO 'user_0d_2'@'localhost';
 FLUSH PRIVILEGES;
+
+-- Lists all privileges of the users user_0d_1 and user_0d_2.
+SHOW GRANTS FOR 'user_0d_1'@'localhost';
+SHOW GRANTS FOR 'user_0d_2'@'localhost';
