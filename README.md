@@ -28,4 +28,10 @@ ALX HIGHER LEVEL PROGRAMMING
 
 0x0D. SQL - Introduction -- Working with Mysql Database and Sql Query.
 
-0x0E. SQL - More queries -- Working with SqlQuery and Permissions ,constraints. 
+0x0E. SQL - More queries -- Working with SqlQuery and Permissions ,constraints.
+
+0x12. JavaScript - Warm up -- Working with JavaScript Data structures And variables.
+
+0x12. JavaScript - Warm up -- Working with JavaScript language Objects and prototype.
+
+ 
