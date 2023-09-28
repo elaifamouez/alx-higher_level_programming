@@ -34,4 +34,4 @@ ALX HIGHER LEVEL PROGRAMMING
 
 0x12. JavaScript - Warm up -- Working with JavaScript language Objects and prototype.
 
- 
+0x10. Python - Network #0 -- Working with HttP Protocol and Curl. 
