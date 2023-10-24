@@ -36,4 +36,8 @@ ALX HIGHER LEVEL PROGRAMMING
 
 0x10. Python - Network #0 -- Working with HttP Protocol and Curl.
 
+<<<<<<< HEAD
 0x14. JavaScript - Web scraping -- Working with JSON data And API fetch.
+=======
+0x11. Python - Network #1 -- Working with Python package urllib and HTTP requests.
+>>>>>>> 4325cb59c84d97fd59f1f27c82e6e3fa1254ece1
