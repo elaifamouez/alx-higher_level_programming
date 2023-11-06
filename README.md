@@ -30,14 +30,15 @@ ALX HIGHER LEVEL PROGRAMMING
 
 0x0E. SQL - More queries -- Working with SqlQuery and Permissions ,constraints.
 
-0x12. JavaScript - Warm up -- Working with JavaScript Data structures And variables.
-
-0x12. JavaScript - Warm up -- Working with JavaScript language Objects and prototype.
-
 0x10. Python - Network #0 -- Working with HttP Protocol and Curl.
 
-<<<<<<< HEAD
-0x14. JavaScript - Web scraping -- Working with JSON data And API fetch.
-=======
 0x11. Python - Network #1 -- Working with Python package urllib and HTTP requests.
->>>>>>> 4325cb59c84d97fd59f1f27c82e6e3fa1254ece1
+
+0x12. JavaScript - Warm up -- Working with JavaScript Data structures And variables.
+
+0x13. JavaScript - Objects, Scopes and Closures -- Working with Objects And Scopes.
+
+0x14. JavaScript - Web scraping -- Working with JSON data And API fetch.
+
+0x15. JavaScript - Web jQuery -- Working with Api and GET & POST request.
+
