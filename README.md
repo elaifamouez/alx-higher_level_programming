@@ -42,3 +42,4 @@ ALX HIGHER LEVEL PROGRAMMING
 
 0x15. JavaScript - Web jQuery -- Working with Api and GET & POST request.
 
+0x16. API advanced -- Work with API and Query String.
